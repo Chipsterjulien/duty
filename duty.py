@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import random, sys, glob, datetime, os, getopt, shutil
+import random, sys, glob, datetime, os, getopt
 
 
 
@@ -86,8 +86,8 @@ def duty_number(n, hash_file):
 	os.makedirs("PDF", exist_ok=True)
 	counter  = 0
 	now      = datetime.datetime.now()
-	name_d   = now.strftime("%d-%m-%Y_%H:%M.tex")
-	name_r   = now.strftime("%d-%m-%Y_%H:%M_reply.tex")
+	name_d   = "PDF/" + now.strftime("%d-%m-%Y_%H:%M.tex")
+	name_r   = "PDF/" + now.strftime("%d-%m-%Y_%H:%M_reply.tex")
 	target_d = open(name_d, 'w')
 	target_r = open(name_r, 'w')
 
@@ -129,23 +129,21 @@ def duty_number(n, hash_file):
 	target_d.close()
 	target_r.close()
 
+	os.chdir('PDF')
+
 	# Compiler 2x les fichiers .tex
 	for i in range(2):
-		os.system("pdflatex %s" %(name_d))
-		os.system("pdflatex %s" %(name_r))
+		os.system("pdflatex %s" %(name_d.split('/')[1]))
+		os.system("pdflatex %s" %(name_r.split('/')[1]))
 
 	# Supprimer les fichiers inutiles liés à la compilation LaTeX
-	list_files = glob.glob(*)
+	list_files = glob.glob('*')
 	for f in list_files:
-		name, ext = os.path.splitext()
+		name, ext = os.path.splitext(f)
 		if ext == '.aux' or ext == '.log' or ext == '.toc':
 			os.remove(f)
 
-	# Déplacer les fichiers .pdf dans le répertoire PDF
-	name_d = os.path.splitext()[0] + '.pdf'
-	name_r = os.path.splitext()[0] + '.pdf'
-	shutil.move(name_d, 'PDF/')
-	shutil.move(name_r, 'PDF/')
+
 
 
 def help():
