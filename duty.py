@@ -3,12 +3,7 @@
 
 import random, sys, glob, datetime, os, getopt
 
-
-
-
-VERSION = "0.1"
-
-
+VERSION = "0.2"
 
 
 def beginning():
@@ -134,6 +129,97 @@ def duty_number(n, hash_file):
 	# Compiler 2x les fichiers .tex
 	for i in range(2):
 		os.system("pdflatex %s" %(name_d.split('/')[1]))
+
+	for i in range(2):
+		os.system("pdflatex %s" %(name_r.split('/')[1]))
+
+	# Supprimer les fichiers inutiles liés à la compilation LaTeX
+	list_files = glob.glob('*')
+	for f in list_files:
+		name, ext = os.path.splitext(f)
+		if ext == '.aux' or ext == '.log' or ext == '.toc':
+			os.remove(f)
+
+
+
+
+def duty_time(t, hash_file):
+	# Vérifier que le temps total est supérieur à t
+	timer_sum = 0
+	for f in hash_file.keys():
+		with open(f, 'r') as r:
+			var = r.readline().split(' ')
+			if len(var) < 2:
+				print("In the \"{0}\" file is not formated correctly ! You should have at the first line a time as \"% 10\" where 10 represents the number of minutes".format(f))
+				sys.exit(2)
+
+			var = var[1].strip()
+			print(var)
+			if not is_float(var):
+				print("In the \"%s\" file, %s is not a number !" %(f, var))
+				sys.exit(2)
+
+			timer_sum += float(var)
+
+	if t > timer_sum:
+		print("You want %d minute%s but you have only %f with all exercises!" %(t, "s" if t > 1 else "", timer_sum))
+		sys.exit(0)
+		
+	# Vérifier qu'on a les droits d'écriture
+	if not os.access(os.getcwd(), os.W_OK):
+		print("You have not the right to create directory !")
+		sys.exit(2)
+
+	os.makedirs("PDF", exist_ok=True)
+	timer    = 0
+	now      = datetime.datetime.now()
+	name_d   = "PDF/" + now.strftime("%d-%m-%Y_%H:%M.tex")
+	name_r   = "PDF/" + now.strftime("%d-%m-%Y_%H:%M_reply.tex")
+	target_d = open(name_d, 'w')
+	target_r = open(name_r, 'w')
+
+
+	# On copie l'entête dans les exercices et les réponses
+	with open('header.tex', 'r') as d:
+		target_d.write(d.read())
+
+	with open('header_reply.tex', 'r') as r:
+		target_r.write(r.read())
+
+	keys = list(hash_file.keys())
+
+	while timer < t:
+		i = random.randint(0, len(keys) - 1)
+
+		# Écrire l'exercice
+		with open(keys[i], 'r') as d:
+			# On ajoute le temps au temps total en récupérant la première ligne
+			timer += float(d.readline().split('%')[1].strip())
+			target_d.write(d.read())
+
+		# Écrire la correction
+		with open(hash_file[keys[i]], 'r') as r:
+			target_r.write(r.read())
+
+		# Supprimer le fichierde la liste
+		del(keys[i])
+
+	# Copier la fin de fichier dans les exercices
+	with open('end.tex', 'r') as d:
+		target_d.write(d.read())
+
+	# Copier la fin de fichier dans les réponses
+	with open('end_reply.tex', 'r') as r:
+		target_r.write(r.read())
+
+	target_d.close()
+	target_r.close()
+
+	os.chdir('PDF')
+
+	# Compiler 2x les fichiers .tex
+	for i in range(2):
+		os.system("pdflatex %s" %(name_d.split('/')[1]))
 		os.system("pdflatex %s" %(name_r.split('/')[1]))
 
 	# Supprimer les fichiers inutiles liés à la compilation LaTeX
@@ -153,13 +239,26 @@ def help():
 	print("  -n <number of exercise(s): make a duty with x exercise(s)")
 	print("EXAMPLE:")
 	print("  %s -t 60" %(sys.argv[0]))
+	print("ATTENTION:")
+	print("You must have \"% a_number\" at the first line of your all files of exercises if you use the \"-t\" option")
 
 
 
 
-def is_number(n):
+def is_int(n):
 	try:
-		int(a)
+		int(n)
+		return True
+
+	except ValueError:
+		return False
+
+
+
+
+def is_float(n):
+	try:
+		float(n)
 		return True
 
 	except ValueError:
@@ -185,7 +284,7 @@ if __name__ == "__main__":
 
 		# NOMBRE
 		elif o == '-n':
-			if not is_number(a):
+			if not is_int(a):
 				print("\"%s\"  is not a number !" %(a))
 				sys.exit(2)
 
@@ -195,87 +294,13 @@ if __name__ == "__main__":
 
 		# TEMPS
 		elif o == '-t':
-			if not is_number(a):
+			if not is_int(a):
 				print("\"%s\"  is not a number !" %(a))
 				sys.exit(2)
 
 			a = int(a)
 			hash_file = beginning()
+			duty_time(a, hash_file)
 
 		elif o == '-v':
 			print("%s %s" %(sys.argv[0], VERSION))
-
-
-
-
-
-
-#import random, sys, glob, time, os
-
-# Le programme prend le temps de l'interrogation (par défaut 1h / 60 minutes)
-# Dans l'entête des questions, il devra y avoir le temps passé pour la question
-# Prévoir l'entête de fichier (header)
-# Prévoir la fin de fichier (end of file)
-# Prévoir la correction
-# Prévoir des tranches de temps pour prendre en premier les exercices les plus long
-# Une fois le devoir prêt, faire un random pour obtenir l'ordre des exercices
-# Générer le fichier avec une date
-# Mettre un barème pour chaque exercice
-
-
-#class Exercise:
-#	def __init__(self, name):
-#		self.filename = name
-#		self.duration = int()
-
-
-#if __name__ == "__main__":
-#	if len(sys.argv) < 2:
-#		print("You must give time in argument : %s 60\n - 60 is the time in minutes" %(sys.argv[0]))
-#		sys.exit(0)
-#
-#	# Je récupère le temps de l'interrogation
-#	all_time = sys.argv[1]
-#
-# On récupère la liste des fichiers
-#	list_of_exercise = glob.glob('*.tex')
-#
-#	# On vérifie qu'un fichier header.tex existe
-#	if "header.tex" in list_of_exercise:
-#		list_of_exercise.remove("header.tex")
-#
-#	else:
-#		print("File header.tex not found !")
-#		sys.exit(2)
-#
-#	# Pareil pour end_of_file.tex
-#	if "end_of_file.tex" in list_of_exercise:
-#		list_of_exercise.remove("end_of_file.tex")
-#
-#	else:
-#		print("File end_of_file.tex not found !")
-#		sys.exit(2)
-#
-#	# On récupère les fichiers qui servent à la correction
-#	list_of_reply = []
-#	for f in list_of_exercise:
-#		if "_reply" in f:
-#			list_of_reply.append(f)
-#
-#	# On supprime les fichiers inutiles
-#	for f in list_of_reply:
-#		list_of_exercise.remove(f)
-#
-#	# On récupère le temps pour chaque exercice sur la première ligne
-#	for exercise in list_of_exercise:
-#		e = Exercise(exercise)
-#		with open(exercise, 'r') as f:
-#			line = f.readline()
-#			if line == '':
-#				print("Exercise \"%s\" don't have the duration at the first line" %(exercise))
-#				sys.exit(2)
-#
-#			else:
-#				e.duration = int(line.split(' ')[1])
-
-#	# Création du fichier exercice avec sa correction
