@@ -1,0 +1,11 @@
+Thanks for downloading duty.
+
+To install it, make sure you have Python 3.3 or greater installed. Then run
+this command from the command prompt:
+
+	python setup.py install (in coding)
+
+If you're upgrading from a previous version, you need to remove it first.
+
+AS AN ALTERNATIVE, you can just copy duty to:
+	/usr/bin
