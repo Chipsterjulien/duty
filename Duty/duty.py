@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-__author__    = "Julien Freyermuth"
-__copyright__ = "Copyright (c) 2013, Julien Freyermuth"
-__license__   = "GPL v3"
-__version__   = "0.2"
-
+__author__           = "Julien Freyermuth"
+__copyright__        = "Copyright (c) 2013, Julien Freyermuth"
+__license__          = "GPL v3"
+__version__          = "0.2"
+__description__      = "Make random duty in LaTeX"
+__long_description__ = "It is a program that allows you to generate questions / homework LaTeX randomly. You can choose either a period or a number of exercises"
 
 import random, sys, glob, datetime, os, getopt
 
