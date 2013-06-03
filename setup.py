@@ -25,19 +25,20 @@ except ImportError:
 
 from duty import *
 
-CLASSIFIERS      = [
-										 'License :: OSI Approved :: GNU General Public License (GPLv3)',
-										 'Programming Language :: Python',
-										 'Programming Language :: Python :: 3'
-										 'Intended Audience :: End Users/Desktop',
-										 'Operating System :: GNU/Linux',
-										 'Development Status :: 5 - Production/Stable',
-										 'Topic :: Office :: LaTeX',
-										 'Natural Language :: English',
-									 ]
-PACKAGES         = [
-										 'duty',
-									 ]
+CLASSIFIERS = [
+								'License :: OSI Approved :: GNU General Public License (GPLv3)',
+								'Programming Language :: Python',
+								'Programming Language :: Python :: 3'
+								'Intended Audience :: End Users/Desktop',
+								'Operating System :: GNU/Linux',
+								'Development Status :: 5 - Production/Stable',
+								'Topic :: Office :: LaTeX',
+								'Natural Language :: English',
+							]
+
+PACKAGES      = [ 'duty', ]
+
+SCRIPTS       = ['duty/duty',]
 
 setup(
 	name             = NAME,
@@ -50,6 +51,7 @@ setup(
 	license          = LICENSE,
 	platforms        = PLATFORMS,
 	packages         = PACKAGES,
+	scripts          = SCRIPTS,
 	requires         = ['TexLive', 'python (>=3.3)'],
 	classifiers      = CLASSIFIERS
 )
