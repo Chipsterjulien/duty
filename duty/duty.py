@@ -1,14 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-__author__           = "Julien Freyermuth"
-__copyright__        = "Copyright (c) 2013, Julien Freyermuth"
-__license__          = "GPL v3"
-__version__          = "0.2"
-__description__      = "Make random duty in LaTeX"
-__long_description__ = "It is a program that allows you to generate questions / homework LaTeX randomly. You can choose either a period or a number of exercises"
-
 import random, sys, glob, datetime, os, getopt
+from duty.version import VERSION
 
 
 def beginning():
@@ -238,7 +232,7 @@ def duty_time(t, hash_file):
 
 
 def help():
-	print("%s %s" %(sys.argv[0], __version__))
+	print("%s %s" %(sys.argv[0], VERSION))
 	print("Usage: %s [Options]" %(sys.argv[0]))
 	print("  -t <number in minute(s)>: make a duty thats last in x minute(s)")
 	print("  -n <number of exercise(s): make a duty with x exercise(s)")
