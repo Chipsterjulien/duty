@@ -36,7 +36,7 @@ CLASSIFIERS      = [
 										 'Natural Language :: English',
 									 ]
 PACKAGES         = [
-										 'Duty',
+										 'duty',
 									 ]
 
 setup(
