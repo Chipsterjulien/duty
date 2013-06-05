@@ -23,7 +23,7 @@ try:
 except ImportError:
 	from distutils.core import setup, Command
 
-from duty import *
+from Duty import *
 
 CLASSIFIERS = [
 								'License :: OSI Approved :: GNU General Public License (GPLv3)',
@@ -36,9 +36,9 @@ CLASSIFIERS = [
 								'Natural Language :: English',
 							]
 
-PACKAGES      = [ 'duty', ]
+PACKAGES      = [ 'Duty', ]
 
-SCRIPTS       = ['duty/duty',]
+SCRIPTS       = ['duty',]
 
 setup(
 	name             = NAME,
