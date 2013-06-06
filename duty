@@ -12,12 +12,12 @@ from Duty.is_a_number import *
 
 
 def help():
-	print("%s %s" %(sys.argv[0], VERSION))
-	print("Usage: %s [Options]" %(sys.argv[0]))
+	print("%s %s" %(os.path.split(sys.argv[0])[1], VERSION))
+	print("Usage: %s [Options]" %(os.path.split(sys.argv[0])[1]))
 	print("  -t <number in minute(s)>: make a duty thats last in x minute(s)")
 	print("  -n <number of exercise(s): make a duty with x exercise(s)")
 	print("EXAMPLE:")
-	print("  %s -t 60" %(sys.argv[0]))
+	print("  %s -t 60" %(os.path.split(sys.argv[0])[1]))
 	print("ATTENTION:")
 	print("You must have \"% a_number\" at the first line of your all files of exercises if you use the \"-t\" option")
 
@@ -60,4 +60,4 @@ if __name__ == "__main__":
 			duty_time(a, hash_file)
 
 		elif o == '-v':
-			print("%s %s" %(sys.argv[0], VERSION))
+			print("%s %s" %(os.path.split(sys.argv[0])[1], VERSION))
