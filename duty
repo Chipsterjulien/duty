@@ -1,63 +1,73 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import random, sys, glob, datetime, os, getopt
+"""
+Duty: Make random duty in LaTeX
+Copyright (C) 2013 Julien Freyermuth
+All Rights Reserved
+This file is part of Duty.
+
+See the file LICENSE for copying permission.
+"""
+
+import sys
+import os
+import getopt
+
 from Duty.version import VERSION
 from Duty.begin import beginning
 from Duty.duty_with_number import duty_number
 from Duty.duty_with_time import duty_time
-from Duty.is_a_number import *
-
-
+from Duty.is_a_number import is_int
+from Duty.mylog import logging
 
 
 def help():
-	print("%s %s" %(os.path.split(sys.argv[0])[1], VERSION))
-	print("Usage: %s [Options]" %(os.path.split(sys.argv[0])[1]))
-	print("  -t <number in minute(s)>: make a duty thats last in x minute(s)")
-	print("  -n <number of exercise(s): make a duty with x exercise(s)")
-	print("EXAMPLE:")
-	print("  %s -t 60" %(os.path.split(sys.argv[0])[1]))
-	print("ATTENTION:")
-	print("You must have \"% a_number\" at the first line of your all files of exercises if you use the \"-t\" option")
-
-
+    print("{0} {1}".format(os.path.split(sys.argv[0])[1], VERSION))
+    print("Usage: {0} [Options]".format(os.path.split(sys.argv[0])[1]))
+    print("  -t <number in minute(s)>: make a duty thats last in x minute(s)")
+    print("  -n <number of exercise(s): make a duty with x exercise(s)")
+    print("EXAMPLE:")
+    print("  {0} -t 60".format(os.path.split(sys.argv[0])[1]))
+    print("ATTENTION:")
+    print("You must have \"% a_number\" at the first line of your all files \
+of exercises if you use the \"-t\" option")
 
 
 if __name__ == "__main__":
-	if len(sys.argv) < 2:
-		help()
-		sys.exit(2)
+    if len(sys.argv) < 2:
+        help()
+        sys.exit(2)
 
-	try:
-		opts, args = getopt.getopt(sys.argv[1:], "hn:t:v")
-	except getopt.GetoptError as err:
-		print(err)
-		sys.exit(2)
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "hn:t:v")
+    except getopt.GetoptError as err:
+        logging.warning(err)
+        sys.exit(2)
 
-	for o, a in opts:
-		if o == '-h':
-			help()
+    for o, a in opts:
+        if o == '-h':
+            help()
 
-		# NOMBRE
-		elif o == '-n':
-			if not is_int(a):
-				print("\"%s\"  is not a number !" %(a))
-				sys.exit(2)
+        # NOMBRE
+        elif o == '-n':
+            if not is_int(a):
+                logging.warning("Error: \"%s\"  is not a number !" % (a))
+                sys.exit(2)
 
-			a = int(a)
-			hash_file = beginning()
-			duty_number(a, hash_file)
+            a = int(a)
+            hash_file = beginning()
+            duty_number(a, hash_file)
 
-		# TEMPS
-		elif o == '-t':
-			if not is_int(a):
-				print("\"%s\"  is not a number !" %(a))
-				sys.exit(2)
+        # TEMPS
+        elif o == '-t':
+            if not is_int(a):
+                logging.warning("Error: \"%s\"  is not a number !" % (a))
+                sys.exit(2)
 
-			a = int(a)
-			hash_file = beginning()
-			duty_time(a, hash_file)
+            a = int(a)
+            hash_file = beginning()
+            duty_time(a, hash_file)
 
-		elif o == '-v':
-			print("%s %s" %(os.path.split(sys.argv[0])[1], VERSION))
+        elif o == '-v':
+            print("%s %s" % (os.path.split(sys.argv[0])[1], VERSION))

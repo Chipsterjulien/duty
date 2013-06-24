@@ -1,6 +1,9 @@
 ** Changelog
 
    v0.2 - Adding -t option with the code
+        - Solve a bug with sys.argv[0] in help function
+        - Adding some comments
+        - Follow pep8 for all files
    
    v0.1 - Create this script
 
