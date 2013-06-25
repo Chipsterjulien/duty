@@ -15,35 +15,35 @@ def beginning():
     Finaly it return an hash of exercice / reply
     """
 
-    # Récupérer la liste de tous les fichiers .tex
+    # Get all files .tex
     list_of_files = glob.glob("*.tex")
 
-    # On vérifie que le fichier header.tex existe
+    # Verify that file exists header.tex
     if not "header.tex" in list_of_files:
         logging.warning("File \"header.tex\" not found !")
         sys.exit(2)
 
-    # On vérifie que le fichier header_reply.tex existe
+    # Verify that file exists header_reply.tex
     if not "header_reply.tex" in list_of_files:
         logging.warning("File \"header_reply.tex\" not found !")
         sys.exit(2)
 
-    # On vérifie que le fichier end.tex existe
+    # Verify that file exists end.tex
     if not "end.tex" in list_of_files:
         logging.warning("File \"end.tex\" not found !")
         sys.exit(2)
 
-    # On vérifie que le fichier end_reply.tex existe
+    # Verify that file exists end_reply.tex
     if not "end_reply.tex" in list_of_files:
         logging.warning("File \"end_reply.tex\" not found !")
         sys.exit(2)
 
+    # Delete theses 4 files in list_of_files
     del_list = ['header.tex', 'header_reply.tex', 'end.tex', 'end_reply.tex']
-    # On supprime les 4 fichiers de la listes
     for f in del_list:
         list_of_files.remove(f)
 
-    # On fait 2 listes: 1 pour les exercices, l'autres pour les réponses
+    # Create 2 lists: 1 for exercises and 1 for answers
     list_of_exercise = []
     list_of_reply = []
     for f in list_of_files:
@@ -52,6 +52,7 @@ def beginning():
         else:
             list_of_exercise.append(f)
 
+    # Merge the 2 lists in a dictionnary
     hash_file = {}
     for i in range(len(list_of_exercise)):
         name, ext = os.path.splitext(list_of_exercise[i])
