@@ -1,91 +1,113 @@
 # -*- coding: utf-8 -*-
 
-import os, datetime, glob
+"""
+Copyright (C) 2013 Julien Freyermuth
+All Rights Reserved
+This file is part of Duty.
+
+See the file LICENSE for copying permission.
+"""
+
+import os
+import datetime
+import glob
+import sys
+import random
+
+from Duty.is_a_number import is_float
 
 
 def duty_time(t, hash_file):
-	# Vérifier que le temps total est supérieur à t
-	timer_sum = 0
-	for f in hash_file.keys():
-		with open(f, 'r') as r:
-			var = r.readline().split(' ')
-			if len(var) < 2:
-				print("In the \"{0}\" file is not formated correctly ! You should have at the first line a time as \"% 10\" where 10 represents the number of minutes".format(f))
-				sys.exit(2)
+    """
+    This function create a PDF file with a number of exercises that depend of
+    the time to solve them
+    """
 
-			var = var[1].strip()
-			print(var)
-			if not is_float(var):
-				print("In the \"%s\" file, %s is not a number !" %(f, var))
-				sys.exit(2)
+    # Verify that the total time is greater than t
+    timer_sum = 0
+    for f in hash_file.keys():
+        with open(f, 'r') as r:
+            var = r.readline().split(' ')
+            if len(var) < 2:
+                print("In the \"{0}\" file is not formated correctly ! You  \
+                should have at the first line a time as \"% 10\" where 10  \
+                represents the number of minutes".format(f))
+                sys.exit(2)
 
-			timer_sum += float(var)
+            var = var[1].strip()
+            print(var)
+            if not is_float(var):
+                print("In the \"{0}\" file, {1} is not a number  \
+                !".format(f, var))
+                sys.exit(2)
 
-	if t > timer_sum:
-		print("You want %d minute%s but you have only %f with all exercises!" %(t, "s" if t > 1 else "", timer_sum))
-		sys.exit(0)
-		
-	# Vérifier qu'on a les droits d'écriture
-	if not os.access(os.getcwd(), os.W_OK):
-		print("You have not the right to create directory !")
-		sys.exit(2)
+            timer_sum += float(var)
 
-	os.makedirs("PDF", exist_ok=True)
-	timer    = 0
-	now      = datetime.datetime.now()
-	name_d   = "PDF/" + now.strftime("%d-%m-%Y_%H:%M.tex")
-	name_r   = "PDF/" + now.strftime("%d-%m-%Y_%H:%M_reply.tex")
-	target_d = open(name_d, 'w')
-	target_r = open(name_r, 'w')
+    if t > timer_sum:
+        print("You want {0} minute{1} but you have only {2} with all  \
+        exercises!".format(t, "s" if t > 1 else "", timer_sum))
+        sys.exit(0)
 
+    # Check rights access to write
+    if not os.access(os.getcwd(), os.W_OK):
+        print("You have not the right to create directory !")
+        sys.exit(2)
 
-	# On copie l'entête dans les exercices et les réponses
-	with open('header.tex', 'r') as d:
-		target_d.write(d.read())
+    os.makedirs("PDF", exist_ok=True)
+    timer = 0
+    now = datetime.datetime.now()
+    name_d = "PDF/" + now.strftime("%d-%m-%Y_%H:%M.tex")
+    name_r = "PDF/" + now.strftime("%d-%m-%Y_%H:%M_reply.tex")
+    target_d = open(name_d, 'w')
+    target_r = open(name_r, 'w')
 
-	with open('header_reply.tex', 'r') as r:
-		target_r.write(r.read())
+    # On copie l'entête dans les exercices et les réponses
+    # Copy headers in exercises and answer files
+    with open('header.tex', 'r') as d:
+        target_d.write(d.read())
 
-	keys = list(hash_file.keys())
+    with open('header_reply.tex', 'r') as r:
+        target_r.write(r.read())
 
-	while timer < t:
-		i = random.randint(0, len(keys) - 1)
+    keys = list(hash_file.keys())
 
-		# Écrire l'exercice
-		with open(keys[i], 'r') as d:
-			# On ajoute le temps au temps total en récupérant la première ligne
-			timer += float(d.readline().split('%')[1].strip())
-			target_d.write(d.read())
+    while timer < t:
+        i = random.randint(0, len(keys) - 1)
 
-		# Écrire la correction
-		with open(hash_file[keys[i]], 'r') as r:
-			target_r.write(r.read())
+        # Write exercise
+        with open(keys[i], 'r') as d:
+            # On ajoute le temps au temps total en récupérant la première ligne
+            timer += float(d.readline().split('%')[1].strip())
+            target_d.write(d.read())
 
-		# Supprimer le fichierde la liste
-		del(keys[i])
+        # Write answer
+        with open(hash_file[keys[i]], 'r') as r:
+            target_r.write(r.read())
 
-	# Copier la fin de fichier dans les exercices
-	with open('end.tex', 'r') as d:
-		target_d.write(d.read())
+        # Delete the file from the list
+        del(keys[i])
 
-	# Copier la fin de fichier dans les réponses
-	with open('end_reply.tex', 'r') as r:
-		target_r.write(r.read())
+    # Copy end of file in the exercises files
+    with open('end.tex', 'r') as d:
+        target_d.write(d.read())
 
-	target_d.close()
-	target_r.close()
+    # Copy end of file in the answer files
+    with open('end_reply.tex', 'r') as r:
+        target_r.write(r.read())
 
-	os.chdir('PDF')
+    target_d.close()
+    target_r.close()
 
-	# Compiler 2x les fichiers .tex
-	for i in range(2):
-		os.system("pdflatex %s" %(name_d.split('/')[1]))
-		os.system("pdflatex %s" %(name_r.split('/')[1]))
+    os.chdir('PDF')
 
-	# Supprimer les fichiers inutiles liés à la compilation LaTeX
-	list_files = glob.glob('*')
-	for f in list_files:
-		name, ext = os.path.splitext(f)
-		if ext == '.aux' or ext == '.log' or ext == '.toc':
-			os.remove(f)
+    # Compile 2 times the .tex file
+    for i in range(2):
+        os.system("pdflatex {0}".format(name_d.split('/')[1]))
+        os.system("pdflatex {0}".format(name_r.split('/')[1]))
 
+    # Delete unnecessary files related of compiling
+    list_files = glob.glob('*')
+    for f in list_files:
+        name, ext = os.path.splitext(f)
+        if ext == '.aux' or ext == '.log' or ext == '.toc':
+            os.remove(f)
