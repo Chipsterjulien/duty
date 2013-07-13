@@ -14,16 +14,17 @@ import sys
 import os
 import getopt
 
-from Duty.version import VERSION
+import Duty
+
 from Duty.begin import beginning
 from Duty.duty_with_number import duty_number
 from Duty.duty_with_time import duty_time
 from Duty.is_a_number import is_int
-from Duty.mylog import logging
+from Duty.mylog import logger
 
 
 def help():
-    print("{0} {1}".format(os.path.split(sys.argv[0])[1], VERSION))
+    print("{0} {1}".format(os.path.split(sys.argv[0])[1], Duty.__version__))
     print("Usage: {0} [Options]".format(os.path.split(sys.argv[0])[1]))
     print("  -t <number in minute(s)>: make a duty thats last in x minute(s)")
     print("  -n <number of exercise(s): make a duty with x exercise(s)")
@@ -37,13 +38,13 @@ of exercises if you use the \"-t\" option")
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         help()
-        sys.exit(2)
+        sys.exit(1)
 
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hn:t:v")
     except getopt.GetoptError as err:
-        logging.warning(err)
-        sys.exit(2)
+        logger.warning(err)
+        sys.exit(1)
 
     for o, a in opts:
         if o == '-h':
@@ -52,8 +53,8 @@ if __name__ == "__main__":
         # NOMBRE
         elif o == '-n':
             if not is_int(a):
-                logging.warning("Error: \"%s\"  is not a number !" % (a))
-                sys.exit(2)
+                logger.warning("Error: \"%s\"  is not a number !".format(a))
+                sys.exit(1)
 
             a = int(a)
             hash_file = beginning()
@@ -62,12 +63,12 @@ if __name__ == "__main__":
         # TEMPS
         elif o == '-t':
             if not is_int(a):
-                logging.warning("Error: \"%s\"  is not a number !" % (a))
-                sys.exit(2)
+                logger.warning("Error: \"%s\"  is not a number !".format(a))
+                sys.exit(1)
 
             a = int(a)
             hash_file = beginning()
             duty_time(a, hash_file)
 
         elif o == '-v':
-            print("%s %s" % (os.path.split(sys.argv[0])[1], VERSION))
+            print("%s %s" % (os.path.split(sys.argv[0])[1], Duty.__version__))

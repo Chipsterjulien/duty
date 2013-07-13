@@ -15,6 +15,7 @@ import sys
 import random
 
 from Duty.is_a_number import is_float
+from Duty.mylog import logger
 
 
 def duty_time(t, hash_file):
@@ -29,29 +30,29 @@ def duty_time(t, hash_file):
         with open(f, 'r') as r:
             var = r.readline().split(' ')
             if len(var) < 2:
-                print("In the \"{0}\" file is not formated correctly ! You  \
-                should have at the first line a time as \"% 10\" where 10  \
-                represents the number of minutes".format(f))
-                sys.exit(2)
+                logger.warning("In the \"{0}\" file is not formated  \
+                correctly ! You should have at the first line a time as  \
+                \"% 10\" where 10 represents the number of minutes".format(f))
+                sys.exit(1)
 
             var = var[1].strip()
             print(var)
             if not is_float(var):
-                print("In the \"{0}\" file, {1} is not a number  \
-                !".format(f, var))
-                sys.exit(2)
+                logger.warning("In the \"{0}\" file, {1} is not a number  \
+                    !".format(f, var))
+                sys.exit(1)
 
             timer_sum += float(var)
 
     if t > timer_sum:
-        print("You want {0} minute{1} but you have only {2} with all  \
-        exercises!".format(t, "s" if t > 1 else "", timer_sum))
+        logger.warning("You want {0} minute{1} but you have only {2} with  \
+            all exercises!".format(t, "s" if t > 1 else "", timer_sum))
         sys.exit(0)
 
     # Check rights access to write
     if not os.access(os.getcwd(), os.W_OK):
-        print("You have not the right to create directory !")
-        sys.exit(2)
+        logger.warning("You have not the right to create directory !")
+        sys.exit(1)
 
     os.makedirs("PDF", exist_ok=True)
     timer = 0
@@ -61,7 +62,6 @@ def duty_time(t, hash_file):
     target_d = open(name_d, 'w')
     target_r = open(name_r, 'w')
 
-    # On copie l'entête dans les exercices et les réponses
     # Copy headers in exercises and answer files
     with open('header.tex', 'r') as d:
         target_d.write(d.read())

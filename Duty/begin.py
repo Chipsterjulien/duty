@@ -4,7 +4,7 @@ import glob
 import os
 import sys
 
-from Duty.mylog import logging
+from Duty.mylog import logger
 
 
 def beginning():
@@ -20,23 +20,23 @@ def beginning():
 
     # Verify that file exists header.tex
     if not "header.tex" in list_of_files:
-        logging.warning("File \"header.tex\" not found !")
-        sys.exit(2)
+        logger.warning("File \"header.tex\" not found !")
+        sys.exit(1)
 
     # Verify that file exists header_reply.tex
     if not "header_reply.tex" in list_of_files:
-        logging.warning("File \"header_reply.tex\" not found !")
-        sys.exit(2)
+        logger.warning("File \"header_reply.tex\" not found !")
+        sys.exit(1)
 
     # Verify that file exists end.tex
     if not "end.tex" in list_of_files:
-        logging.warning("File \"end.tex\" not found !")
-        sys.exit(2)
+        logger.warning("File \"end.tex\" not found !")
+        sys.exit(1)
 
     # Verify that file exists end_reply.tex
     if not "end_reply.tex" in list_of_files:
-        logging.warning("File \"end_reply.tex\" not found !")
-        sys.exit(2)
+        logger.warning("File \"end_reply.tex\" not found !")
+        sys.exit(1)
 
     # Delete theses 4 files in list_of_files
     del_list = ['header.tex', 'header_reply.tex', 'end.tex', 'end_reply.tex']
@@ -61,14 +61,14 @@ def beginning():
             hash_file[list_of_exercise[i]] = reply
             list_of_reply.remove(reply)
         else:
-            logging.warning("\"{0}\" not found !".format(reply))
-            sys.exit(2)
+            logger.warning("\"{0}\" not found !".format(reply))
+            sys.exit(1)
 
     if len(list_of_reply) != 0:
         for f in list_of_reply:
             name, ext = os.path.splitext(f)
             name = name.split("_")[0]
-            logging.warning("\"{0}\" not found !".format(name + ext))
-        sys.exit(2)
+            logger.warning("\"{0}\" not found !".format(name + ext))
+        sys.exit(1)
 
     return hash_file

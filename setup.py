@@ -17,41 +17,44 @@
     See the file LICENSE for copying permission.
 """
 
-import sys
 try:
-	from setuptools import setup, Command
+    from setuptools import setup, find_packages
 except ImportError:
-	from distutils.core import setup, Command
+    from distutils.core import setup, find_packages
 
-from Duty import *
+import Duty
+
+###########
+# À refaire
+###########
 
 CLASSIFIERS = [
-								'License :: OSI Approved :: GNU General Public License (GPLv3)',
-								'Programming Language :: Python',
-								'Programming Language :: Python :: 3'
-								'Intended Audience :: End Users/Desktop',
-								'Operating System :: GNU/Linux',
-								'Development Status :: 5 - Production/Stable',
-								'Topic :: Office :: LaTeX',
-								'Natural Language :: English',
-							]
+    'Development Status :: 5 - Production/Stable',
+    'Environment :: Console',
+    'Intended Audience :: Education',
+    'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+    'Natural Language :: English',
+    'Operating System :: POSIX',
+    'Operating System :: POSIX :: Linux',
+    'Programming Language :: Python :: 3.3',
+    'Topic :: Office :: LaTeX',
+]
 
-PACKAGES      = [ 'Duty', ]
-
-SCRIPTS       = ['duty',]
+SCRIPTS = ['duty', ]
 
 setup(
-	name             = NAME,
-	version          = VERSION,
-	description      = DESCRIPTION,
-	long_description = LONG_DESCRIPTION,
-	author           = AUTHOR,
-	author_email     = AUTHOR_EMAIL,
-	url              = URL,
-	license          = LICENSE,
-	platforms        = PLATFORMS,
-	packages         = PACKAGES,
-	scripts          = SCRIPTS,
-	requires         = ['TexLive', 'python (>=3.3)'],
-	classifiers      = CLASSIFIERS
+        name             = Duty.__name__,
+        version          = Duty.__version__,
+        description      = Duty.__description__,
+        long_description = Duty.__long_description__,
+        author           = Duty.__author__,
+        author_email     = Duty.__author_email__,
+        url              = Duty.__url__,
+        license          = Duty.__license__,
+        platforms        = Duty.__platforms__,
+        packages         = find_packages(),
+        include_package_data = True,
+        scripts          = SCRIPTS,
+        requires         = ['python (>=3.3)'],
+        classifiers      = CLASSIFIERS,
 )

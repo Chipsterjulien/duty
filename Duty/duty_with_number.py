@@ -26,12 +26,12 @@ def duty_number(n, hash_file):
         print("You want {0} exercice{1} but there are only {2} file{3} \
             !".format(n, "s" if n > 1 else "", len(hash_file),
             "s" if len(hash_file) > 1 else ""))
-        sys.exit(2)
+        sys.exit(1)
 
     # Test right of current directory
     if not os.access(os.getcwd(), os.W_OK):
         print("You have not the right to create directory !")
-        sys.exit(2)
+        sys.exit(1)
 
     os.makedirs("PDF", exist_ok=True)
     counter = 0
